@@ -14,9 +14,9 @@ def getConnection(cursorType=None):
             cursorType = Cursor
 
         conn = mysql.connect(
-            host="localhost",
-            user="root",
-            password="root",
+            host="host",
+            user="usuario",
+            password="senha",
             database="kiDeliciaJP",
             cursorclass=cursorType
         )
