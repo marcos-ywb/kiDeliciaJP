@@ -1,0 +1,42 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 800px;
+}
+
+#sign-in-container,
+#sign-up-container {
+    display: none;
+    width: 100%;
+    background-color: #5656561a;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#sign-in-container.is-active,
+#sign-up-container.is-active {
+    display: block;
+}
+
+.paragraph {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 17px;
+}
+
+.paragraph a:hover {
+    text-decoration: underline;
+}
+
+#password-error,
+#password-success {
+    text-align: center;
+    display: none;
+}

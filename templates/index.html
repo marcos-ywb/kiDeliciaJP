@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial | KiDeliciaJP</title>
+
+    <!--Bulma.IO-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/css/bulma.min.css') }}">
+
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!--Custom CSS-->
+
+    <!--Notify CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/notify.css') }}">
+</head>
+
+<body>
+
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            {%
+            set category_map = {
+            'aviso': 'warning',
+            'sucesso': 'success',
+            'erro': 'danger',
+            'info': 'info'
+            }
+            %}
+            <div class="notification is-{{ category_map.get(category, '') }}">
+                <button class="delete"></button>
+                {{ message | safe }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <main>
+
+    </main>
+
+    <!--Custom JS-->
+
+    <!--Notify JS-->
+    <script src="{{ url_for('static', filename='js/statics/notify.js') }}"></script>
+</body>
+
+</html>

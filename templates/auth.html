@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticação! | KiDeliciaJP</title>
+
+    <!--Bulma.IO-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/css/bulma.min.css') }}">
+
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+
+    <!--Notify CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/notify.css') }}">
+
+
+</head>
+
+<body>
+    <!--Notify-->
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            {%
+            set category_map = {
+            'aviso': 'warning',
+            'sucesso': 'success',
+            'erro': 'danger',
+            'info': 'info'
+            }
+            %}
+            <div class="notification is-{{ category_map.get(category, '') }}">
+                <button class="delete"></button>
+                {{ message | safe }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!--Main Container-->
+    <main>
+        <div class="auth-container">
+
+            <div class="tabs is-centered is-medium">
+                <ul>
+                    <li>
+                        <a>
+                            <span class="icon is-small"><i class="fa-solid fa-door-open" aria-hidden="true"></i></span>
+                            <span>Login</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a>
+                            <span class="icon is-small"><i class="fa-regular fa-id-card" aria-hidden="true"></i></span>
+                            <span>Cadastro</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!--SignIn Container-->
+            <div id="sign-in-container">
+                <div class="container is-fullhd">
+                    <form action="/trySignIn" method="post">
+
+                        <!--Email-->
+                        <div class="field">
+                            <p class="control has-icons-left has-icons-right">
+                                <input class="input is-medium" type="email" placeholder="Email" name="email" />
+                                <span class="icon is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <span class="icon is-right toggle-password">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!--Senha-->
+                        <div class="field">
+                            <p class="control has-icons-left has-icons-right">
+                                <input class="input is-medium" type="password" placeholder="Password"
+                                    name="sign-in-password" id="sign-in-password" />
+                                <span class="icon is-left">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <span class="icon is-right">
+                                    <i class="fa-solid fa-eye"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!-- Botão submit -->
+                        <div class="field">
+                            <p class="buttons">
+                                <button class="button is-medium is-fullwidth is-link is-outlined">
+                                    <span>Entrar!</span>
+                                    <span class="icon">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </button>
+                            </p>
+                        </div>
+
+                        <hr>
+
+                        <!--Link-->
+                        <div class="field">
+                            <p class="paragraph">
+                                Ainda não possui uma conta? Faça seu <a
+                                    href="{{ url_for('auth') }}#sign-up">cadastro</a> já!
+                            </p>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!--SignUp Container-->
+            <div id="sign-up-container">
+                <div class="container is-fullhd">
+                    <form action="/trySignUp" method="post">
+
+                        <!--Nome-->
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-medium" type="text" placeholder="Nome" name="nome" />
+                                <span class="icon is-left">
+                                    <i class="fa-solid fa-user"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!--Email-->
+                        <div class="field">
+                            <p class="control has-icons-left has-icons-right">
+                                <input class="input is-medium" type="email" placeholder="Email" name="email" />
+                                <span class="icon is-left">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <span class="icon is-right">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!--Senha e confirmar senha-->
+                        <div class="field">
+                            <div class="columns is-2">
+
+                                <div class="column">
+                                    <p class="control has-icons-left">
+                                        <input class="input is-medium" type="password" placeholder="Password"
+                                            name="sign-up-password" id="sign-up-password" />
+                                        <span class="icon is-left">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="column">
+                                    <p class="control has-icons-left">
+                                        <input class="input is-medium" type="password" placeholder="Confirm password"
+                                            name="confirm-password" id="confirm-password" />
+                                        <span class="icon is-left">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <p class="help is-danger" id="password-error">
+                                As senhas não coincidem!
+                            </p>
+                            <p class="help is-success" id="password-success">
+                                Senha válida!
+                            </p>
+
+                        </div>
+
+                        <!-- Botão submit -->
+                        <div class="field">
+                            <p class="buttons">
+                                <button class="button is-medium is-fullwidth is-link is-outlined">
+                                    <span>Registrar-se!</span>
+                                    <span class="icon">
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </button>
+                            </p>
+                        </div>
+
+                        <hr>
+
+                        <div class="field">
+                            <p class="paragraph">
+                                Já possui uma conta? Faça seu <a href="{{ url_for('auth') }}#sign-in">login</a> já!
+                            </p>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+
+    <!--Custom JS-->
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+
+    <!--Notify JS-->
+    <script src="{{ url_for('static', filename='js/statics/notify.js') }}"></script>
+</body>
+
+</html>

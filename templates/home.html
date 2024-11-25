@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | KiDeliciaJP</title>
+
+    <!--Bulma.IO-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/css/bulma.min.css') }}">
+
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
+    <!--Notify CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/notify.css') }}">
+
+    <!--Navbar CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/navbar.css') }}">
+</head>
+
+<body>
+    <!--Notify-->
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            {%
+            set category_map = {
+            'aviso': 'warning',
+            'sucesso': 'success',
+            'erro': 'danger',
+            'info': 'info'
+            }
+            %}
+            <div class="notification is-{{ category_map.get(category, '') }}">
+                <button class="delete"></button>
+                {{ message | safe }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!--Navbar-->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <!--Logo-->
+            <a class="navbar-item" href="{{ url_for('home') }}">
+                <div class="logo-container">
+                    <i class="fa-solid fa-lemon logo-icon"></i>
+                    <svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="640" height="160" class="background" />
+                        <text x="50%" y="58%" class="logo-text" dominant-baseline="middle">
+                            KiDeliciaJP
+                        </text>
+                    </svg>
+                </div>
+            </a>
+            <!--Burger Menu-->
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="basic-navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <!--Menu-->
+        <div id="basic-navbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item is-selected" href="{{ url_for('home') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-house"></i>
+                    </span>
+                    Home
+                </a>
+                <a class="navbar-item" href="{{ url_for('produtos') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </span>
+                    Produtos
+                </a>
+                <a class="navbar-item" href="{{ url_for('vendas') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-parachute-box"></i>
+                    </span>
+                    Vendas
+                </a>
+                <!--Dropdown Hovevable-->
+                <div class="navbar-item has-dropdown" id="dropdownMenu">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </span>
+                        Outros
+                    </a>
+                    <div class="navbar-dropdown">
+
+                        <a class="navbar-item" href="{{ url_for('insights') }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-chart-simple"></i>
+                            </span>
+                            Insights
+                        </a>
+
+                        <a class="navbar-item" href="">
+                            <span class="icon">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </span>
+                            Relatórios
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!--Botão LogOut-->
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons has-icons-right">
+                        <a href="{{ url_for('logOut') }}" class="button is-danger is-outlined">
+                            <strong>Sair</strong>
+                            <span class="icon">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!--Main Content-->
+    <main>
+        <section class="section">
+
+
+        </section>
+    </main>
+
+
+
+
+
+
+    <!--Custom JS-->
+
+    <!--Notify JS-->
+    <script src="{{ url_for('static', filename='js/statics/notify.js') }}"></script>
+
+    <!--Navbar JS-->
+    <script src="{{ url_for('static', filename='js/statics/navbar.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos | KiDeliciaJP</title>
+
+    <!--Bulma.IO CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/css/bulma.min.css') }}">
+
+    <!--Font Awesome JS-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/produtos.css') }}">
+
+    <!--Notify CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/notify.css') }}">
+
+    <!--Navbar CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/navbar.css') }}">
+
+    <!--Tables CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/tables.css') }}">
+
+    <!--Modal CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/modal.css') }}">
+</head>
+
+<body>
+    <!--Notify-->
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            {%
+            set category_map = {
+            'aviso': 'warning',
+            'sucesso': 'success',
+            'erro': 'danger',
+            'info': 'info'
+            }
+            %}
+            <div class="notification is-{{ category_map.get(category, '') }}">
+                <button class="delete"></button>
+                {{ message | safe }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!--Navbar-->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <!--Logo-->
+            <a class="navbar-item" href="{{ url_for('home') }}">
+                <div class="logo-container">
+                    <i class="fa-solid fa-lemon logo-icon"></i>
+                    <svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="640" height="160" class="background" />
+                        <text x="50%" y="58%" class="logo-text" dominant-baseline="middle">
+                            KiDeliciaJP
+                        </text>
+                    </svg>
+                </div>
+            </a>
+            <!--Burger Menu-->
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="basic-navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <!--Menu-->
+        <div id="basic-navbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="{{ url_for('home') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-house"></i>
+                    </span>
+                    Home
+                </a>
+                <a class="navbar-item is-selected" href="{{ url_for('produtos') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </span>
+                    Produtos
+                </a>
+                <a class="navbar-item" href="{{ url_for('vendas') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-parachute-box"></i>
+                    </span>
+                    Vendas
+                </a>
+                <!--Dropdown Hovevable-->
+                <div class="navbar-item has-dropdown" id="dropdownMenu">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </span>
+                        Outros
+                    </a>
+                    <div class="navbar-dropdown">
+
+                        <a class="navbar-item" href="{{ url_for('insights') }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-chart-simple"></i>
+                            </span>
+                            Insights
+                        </a>
+
+                        <a class="navbar-item" href="{{ url_for('reports') }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </span>
+                            Relatórios
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!--Botão LogOut-->
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons has-icons-right">
+                        <a href="{{ url_for('logOut') }}" class="button is-danger is-outlined">
+                            <strong>Sair</strong>
+                            <span class="icon">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+    <main>
+        <section class="section">
+
+
+            <div id="produtos-header">
+                <!-- Título -->
+                <h1 class="title is-4 mb-3">Lista de Produtos</h1>
+
+                <!-- Barra de ações -->
+                <div class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center">
+                    <!-- Campo de busca -->
+                    <div class="field is-flex-grow-1 mr-3">
+                        <div class="control has-icons-left">
+                            <input class="input" type="text" placeholder="Buscar por nome..." id="filter-name-input">
+                            <span class="icon is-small is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Botão para filtrar por categoria -->
+
+                    <!--
+                    <div class="category-filter">
+                        <div class="field">
+                            <div class="control">
+                                <div class="select">
+                                    <select id="filter-category">
+                                        <option value="">Todas as categorias</option>
+                                        <option value="categoria1">Categoria 1</option>
+                                        <option value="categoria2">Categoria 2</option>
+                                        <option value="categoria3">Categoria 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div class="field">
+                            <div class="control">
+                                <button class="button is-info is-small" id="filter-button">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-filter"></i>
+                                    </span>
+                                    <span>Filtrar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+
+
+
+                    {% if disabledProdutos %}
+                    <div class="field">
+                        <div class="control">
+                            <a class="button is-warning is-small is-outlined" id="disabled-products-btn">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Produtos Desativados</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+
+                    <!-- Botão para adicionar produto -->
+                    <div class="field">
+                        <div class="control">
+                            <a class="button is-link is-small is-outlined" id="add-product-btn">
+                                <span class="icon is-small">
+                                    <i class="fas fa-plus"></i>
+                                </span>
+                                <span>Adicionar Produto</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!-- Mensagem exibida quando não há produtos -->
+            {% if not produtos %}
+            <div class="notification is-warning has-text-centered">
+                <div class="icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <strong>Sem registro de produtos!</strong>
+            </div>
+            {% else %}
+            <!-- Contêiner da tabela com rolagem vertical -->
+            <div class="table-container">
+                <table class="table is-fullwidth is-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in produtos %}
+                        <tr class="product-row" data-id="{{ produto[0] }}" data-nome="{{ produto[1] }}"
+                            data-preco="{{ produto[2] }}" data-estoque="{{ produto[3] }}">
+                            <td>#{{ produto[0] }}</td>
+                            <td>{{ produto[1] }}</td>
+                            <td>{{ formatCurrency(produto[2]) }}</td>
+                            <td>{{ produto[3] }} und(s)</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+
+            <!-- Modal de detalhes do produto -->
+            <div class="modal" id="details-modal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <div>
+                            <p class="modal-card-title">Detalhes do Produto</p>
+                            <p class="subtitle is-6">Mais detalhes!</p>
+                        </div>
+                        <button class="delete" aria-label="close" id="close-details-modal-btn"></button>
+                    </header>
+
+                    <section class="modal-card-body">
+                        <p><strong>Nome:</strong> <span id="modal-produto-nome"></span></p>
+                        <p><strong>Preço:</strong> R$ <span id="modal-produto-preco"></span></p>
+                        <p><strong>Estoque:</strong> <span id="modal-produto-estoque"></span></p>
+                    </section>
+
+                    <footer class="modal-card-foot is-justify-content-space-between">
+                        <div class="left-side">
+                            <button class="button" id="cancel-details-modal-btn">Cancelar</button>
+                        </div>
+                        <div class="right-side">
+                            <button class="button is-link is-outlined" id="save-details-modal-btn">Editar</button>
+                            <button onclick="deleteProduct()" class="button is-danger is-outlined"
+                                id="delete-details-modal-btn">Desativar</button>
+                        </div>
+                    </footer>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Modal adicionar novo produto -->
+        <div class="modal" id="add-product-modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <div>
+                        <p class="modal-card-title">Novo produto</p>
+                        <p class="subtitle is-6">Preencha os campos abaixo para prosseguir!</p>
+                    </div>
+                    <button class="delete" aria-label="close" id="close-add-product-modal-btn"></button>
+                </header>
+
+                <section class="modal-card-body">
+                    <form action="/tryCreateProduto" method="post" id="new-product-form">
+                        <!--Nome do produto-->
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-medium" type="text" placeholder="Nome do produto"
+                                    name="nomeProduto" />
+                                <span class="icon is-left">
+                                    <i class="fa-solid fa-clipboard-list"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!--Preço do produto-->
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-medium" type="text" placeholder="Preço do produto"
+                                    name="precoProduto" />
+                                <span class="icon is-left">
+                                    <i class="fa-solid fa-dollar-sign"></i>
+                                </span>
+                            </p>
+                        </div>
+
+                        <!--Quantidade em estoque-->
+                        <div class="field">
+                            <p class="control has-icons-left">
+                                <input class="input is-medium" type="text" placeholder="Quantidade em estoque"
+                                    name="estoqueProduto" />
+                                <span class="icon is-left">
+                                    <i class="fa-solid fa-list-ol"></i>
+                                </span>
+                            </p>
+                        </div>
+
+
+                    </form>
+                </section>
+                <footer class="modal-card-foot">
+                    <div class="buttons">
+                        <button class="button is-link" id="save-modal-btn">Salvar</button>
+                        <button class="button" id="cancel-modal-btn">Cancelar</button>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+
+
+
+        <!-- Modal produtos desativados -->
+        <div class="modal" id="disabled-products-modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+                <header class="modal-card-head">
+                    <div>
+                        <p class="modal-card-title">Produtos Desativados</p>
+                        <p class="subtitle is-6">Lista de produtos atualmente desativados.</p>
+                    </div>
+                    <button class="delete" aria-label="close" id="close-disabled-products-modal-btn"></button>
+                </header>
+
+                <section class="modal-card-body">
+                    {% if not disabledProdutos %}
+                    <div class="notification is-warning has-text-centered">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <strong>Não há produtos desativados no momento!</strong>
+                    </div>
+                    {% else %}
+                    <div class="columns is-multiline">
+                        {% for produto in disabledProdutos %}
+                        <div class="column is-half">
+                            <div class="card">
+                                <div class="card-content">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <p class="title is-4">{{ produto[1] }}</p>
+                                            <p class="subtitle is-6">ID: #{{ produto[0] }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="content">
+                                        <p><strong>Preço:</strong> {{ formatCurrency(produto[2]) }}</p>
+                                        <p><strong>Estoque:</strong> {{ produto[3] }} und(s)</p>
+                                        <button data-disabled-product-id="{{ produto[0] }}" id="activate-product-btn"
+                                            onclick="enableProduct()" type="submit"
+                                            class="button is-success">Ativar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </section>
+
+
+                <footer class="modal-card-foot">
+                    <button class="button" id="cancel-disabled-products-btn">Cancelar</button>
+                </footer>
+            </div>
+        </div>
+
+    </main>
+
+    <!--Custom JS-->
+    <script src="{{ url_for('static', filename='js/produtos.js') }}"></script>
+
+    <!--Notify JS-->
+    <script src="{{ url_for('static', filename='js/statics/notify.js') }}"></script>
+
+    <!--Navbar JS-->
+    <script src="{{ url_for('static', filename='js/statics/navbar.js') }}"></script>
+</body>
+
+</html>

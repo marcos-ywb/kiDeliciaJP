@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights | KiDeliciaJP</title>
+
+    <!--Bulma.IO-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bulma/css/bulma.min.css') }}">
+
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!--Custom CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/insights.css') }}">
+
+    <!--Notify CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/notify.css') }}">
+
+    <!--Navbar CSS-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/statics/navbar.css') }}">
+
+    <!--Charts JS-->
+    <script src="{{ url_for('static', filename='js/statics/chart.umd.js') }}"></script>
+
+    <!--JQuery-->
+    <script src="{{ url_for('static', filename='js/statics/jquery-3.6.0.min.js') }}"></script>
+
+</head>
+
+<body>
+    <!--Notify-->
+    <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+            {% for category, message in messages %}
+            {%
+            set category_map = {
+            'aviso': 'warning',
+            'sucesso': 'success',
+            'erro': 'danger',
+            'info': 'info'
+            }
+            %}
+            <div class="notification is-{{ category_map.get(category, '') }}">
+                <button class="delete"></button>
+                {{ message | safe }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <!--Navbar-->
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <!--Logo-->
+            <a class="navbar-item" href="{{ url_for('home') }}">
+                <div class="logo-container">
+                    <i class="fa-solid fa-lemon logo-icon"></i>
+                    <svg width="640" height="160" viewBox="0 0 640 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="640" height="160" class="background" />
+                        <text x="50%" y="58%" class="logo-text" dominant-baseline="middle">
+                            KiDeliciaJP
+                        </text>
+                    </svg>
+                </div>
+            </a>
+            <!--Burger Menu-->
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="basic-navbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+        <!--Menu-->
+        <div id="basic-navbar" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="{{ url_for('home') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-house"></i>
+                    </span>
+                    Home
+                </a>
+                <a class="navbar-item" href="{{ url_for('produtos') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                    </span>
+                    Produtos
+                </a>
+                <a class="navbar-item" href="{{ url_for('vendas') }}">
+                    <span class="icon">
+                        <i class="fa-solid fa-parachute-box"></i>
+                    </span>
+                    Vendas
+                </a>
+                <!--Dropdown Hovevable-->
+                <div class="navbar-item has-dropdown" id="dropdownMenu">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </span>
+                        Outros
+                    </a>
+                    <div class="navbar-dropdown">
+
+                        <a class="navbar-item is-selected" href="{{ url_for('insights') }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-chart-simple"></i>
+                            </span>
+                            Insights
+                        </a>
+
+                        <a class="navbar-item" href="{{ url_for('reports') }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-file-lines"></i>
+                            </span>
+                            Relatórios
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+            <!--Botão LogOut-->
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons has-icons-right">
+                        <a href="{{ url_for('logOut') }}" class="button is-danger is-outlined">
+                            <strong>Sair</strong>
+                            <span class="icon">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+
+    <!--Main Content-->
+    <main>
+        <section class="section">
+            <div id="insights-header">
+
+                <h1 class="title is-4 mb-3">Lista de Insights</h1>
+
+                <div class="is-flex is-flex-wrap-wrap is-justify-content-space-between is-align-items-center">
+                    <div class="field is-flex-grow-1 mr-3">
+                        <div class="control has-icons-left">
+                            <div class="select is-normal is-fullwidth">
+                                <select id="categoria-filtro">
+                                    <option selected disabled>Selecione uma categoria...</option>
+
+                                    <option value="vendas-mensais">Vendas mensais</option>
+                                    <option value="receita-mensal">Receita mensal</option>
+                                    <option value="vendas-diarias">Vendas diárias</option>
+                                    <option value="receita-diaria">Receita diária</option>
+                                    <option value="vendas-produto">Venda por produto</option>
+                                    <option value="receita-produto">Receita por produto</option>
+                                    <option value="produtos-estoque">Produtos em estoque</option>
+                                    <option value="produtos-mais-vendidos">Produtos mais vendidos</option>
+                                    <option value="vendas-usuario">Vendas por usuário</option>
+
+                                </select>
+                            </div>
+                            <span class="icon is-medium is-left">
+                                <i class="fa-solid fa-filter"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="graficos-container" class="mt-5">
+
+                <!--Grafico (Vendas Mensais)-->
+                <div class="grafico" id="vendas-mensais">
+                    <h2 class="title is-5">Vendas Mensais</h2>
+                    <canvas id="vendas-mensais-chart"></canvas>
+                </div>
+
+                <!--Grafico (Receita Mensal)-->
+                <div class="grafico" id="receita-mensal">
+                    <h2 class="title is-5">Receita Mensal</h2>
+                    <canvas id="receita-mensal-chart"></canvas>
+                </div>
+
+                <!--Grafico (Vendas Diarias)-->
+                <div class="grafico" id="vendas-diarias">
+                    <h2 class="title is-5">Vendas Diarias</h2>
+                    <canvas id="vendas-diarias-chart"></canvas>
+                </div>
+
+                <!--Grafico (Receita Diaria)-->
+                <div class="grafico" id="receita-diaria">
+                    <h2 class="title is-5">Receita Diaria</h2>
+                    <canvas id="receita-diaria-chart"></canvas>
+                </div>
+
+                <!--Grafico (Vendas por Produto)-->
+                <div class="grafico" id="vendas-produto">
+                    <h2 class="title is-5">Vendas por Produto</h2>
+                    <canvas id="vendas-produto-chart"></canvas>
+                </div>
+
+                <!--Grafico (Receita por Produto)-->
+                <div class="grafico" id="receita-produto">
+                    <h2 class="title is-5">Receita por Produto</h2>
+                    <canvas id="receita-produto-chart"></canvas>
+                </div>
+
+                <!--Grafico (Produtos em Estoque)-->
+                <div class="grafico" id="produtos-estoque">
+                    <h2 class="title is-5">Produtos em Estoque</h2>
+                    <canvas id="produtos-estoque-chart"></canvas>
+                </div>
+
+                <!--Grafico (Produtos Mais Vendidos)-->
+                <div class="grafico" id="produtos-mais-vendidos">
+                    <h2 class="title is-5">Produtos Mais Vendidos</h2>
+                    <canvas id="produtos-mais-vendidos-chart"></canvas>
+                </div>
+
+                <!--Grafico (Vendas por Usuário)-->
+                <div class="grafico" id="vendas-usuario">
+                    <h2 class="title is-5">Vendas por Usuário</h2>
+                    <canvas id="vendas-usuario-chart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+    </main>
+
+
+
+
+
+
+
+
+
+
+    <!--Custom JS-->
+    <script src="{{ url_for('static', filename='js/insights.js') }}"></script>
+
+    <!--Notify JS-->
+    <script src="{{ url_for('static', filename='js/statics/notify.js') }}"></script>
+
+    <!--Navbar JS-->
+    <script src="{{ url_for('static', filename='js/statics/navbar.js') }}"></script>
+</body>
+
+</html>
